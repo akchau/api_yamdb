@@ -6,3 +6,11 @@ class OnlyPostModelViewSet(
     viewsets.GenericViewSet
 ):
     pass
+
+
+class OnlyMeModelViewSet(
+    mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet
+):
+    pass
