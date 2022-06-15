@@ -6,11 +6,10 @@ from .views import UserViewSet, UserRegistrationViewSet, UserMeApi
 app_name = "users"
 
 router = DefaultRouter()
-router.register(r'signup', UserRegistrationViewSet)
-router.register(r'', UserViewSet)
+router.register(r"signup", UserRegistrationViewSet)
+router.register(r"token", UserRegistrationViewSet)
 
 
 urlpatterns = [
-    path(r'me/', UserMeApi.as_view()),
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]

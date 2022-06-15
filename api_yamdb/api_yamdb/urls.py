@@ -19,12 +19,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path(
-        "redoc/",
-        TemplateView.as_view(template_name="redoc.html"),
-        name="redoc"
-    ),
-    path(r'auth/', include('users.urls')),
-    path(r'auth/', include('djoser.urls.jwt')),
-    path(r'users/', include('users.urls')),
+    path("redoc/", TemplateView.as_view(template_name="redoc.html"), name="redoc"),
+    path(r"api/v1/auth/", include("users.urls")),
+    path(r"users/", include("users.urls")),
 ]
