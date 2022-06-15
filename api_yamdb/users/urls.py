@@ -1,15 +1,16 @@
-from django.urls import path, include
+"""urls приложения users."""
 from rest_framework.routers import DefaultRouter
+from django.urls import path, include
 
-from .views import UserViewSet, UserRegistrationViewSet, UserMeApi
+from .views import UserViewSet, UserMeView
 
 app_name = "users"
 
 router = DefaultRouter()
-router.register(r"signup", UserRegistrationViewSet)
-router.register(r"token", UserRegistrationViewSet)
+router.register(r"users", UserViewSet)
 
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("v1/users/me/", UserMeView.as_view()),
+    path("v1/", include(router.urls)),
 ]

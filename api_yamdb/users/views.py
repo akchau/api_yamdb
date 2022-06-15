@@ -1,52 +1,39 @@
+"""Вьюсеты приложения user."""
 from django.shortcuts import get_object_or_404
-from django.core.mail import send_mail
-from rest_framework import viewsets, permissions
+
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import viewsets, views, status
 
-from .permissions import OnlyMe
-from .serializers import UserSerializer, User
-
-
-class RegistrationAPIView(APIView):
-    permission_classes = (permissions.AllowAny,)
-
-    def post(self, request):
-        email = self.validated_data["email"]
-        send_mail(
-            "Подтверждение регистрации yamdb",
-            "Для подтверждения регистрации перейдите сделайте запрос на.",
-            "yamdb@yamdb.com",
-            [email],
-            fail_silently=False,
-        )
-        return Response(self.serializer.data)
+from .models import User
+from .serializers import UserSerializer, UserMeSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """Вьюсет пользователя.
-    Унаследован от ModelViewSet.
-    Чтобы пользователи не могли изменять данные друг друга
+    """
+    Вью-сет для работы с пользователем.
+    Только для админа.
     """
 
-    queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAdminUser,)
+    queryset = User.objects.all()
 
 
-class UserMeApi(APIView):
-    permission_classes = (OnlyMe, permissions.IsAuthenticated)
+class UserMeView(views.APIView):
+    """
+    Вью-сет для работы с данными пользователя.
+    """
 
     def get(self, request):
-        queryset = User.objects.all()
-        user = get_object_or_404(queryset, username=request.user.username)
-        serializer = UserSerializer(user)
+        """Функция возвращает данные пользователя."""
+        user = get_object_or_404(User, id=1)
+        serializer = UserMeSerializer(user)
         return Response(serializer.data)
 
     def patch(self, request):
-        queryset = User.objects.all()
-        user = get_object_or_404(queryset, username=request.user.username)
-        serializer = UserSerializer(user, data=request.data, partial=True)
+        """Функция апдейтит данные пользователя, если они валидны."""
+        user = get_object_or_404(User, id=1)
+        serializer = UserMeSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-        return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
