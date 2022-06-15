@@ -1,22 +1,40 @@
-from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from .models import User
 
-User = get_user_model()
+
+class UserActivationSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для создания неподтвержденного польлзователя.
+    Управление пользователем. Отправка эмэйла."
+    """
+
+    class Meta:
+        model = User
+        fields = ("email", "username")
+
+
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для регистрации польлзователя."
+    """
+
+    class Meta:
+        fields = ("email", "username")
+        model = User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор для админа. Управление пользователем."""
+
     class Meta:
         model = User
         fields = ("username", "email", "first_name", "last_name", "bio", "role")
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ("email", "username")
-        model = User
+class UserMeSerializer(serializers.ModelSerializer):
+    """Сериализатор для просмотра и редактирования своих данных."""
 
-    def validate_username(self, value):
-        if value == "me":
-            raise serializers.ValidationError("Недоступное имя пользователя")
-        return value
+    class Meta:
+        model = User
+        fields = ("username", "email", "first_name", "last_name", "bio", "role")

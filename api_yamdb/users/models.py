@@ -9,6 +9,7 @@ class User(AbstractUser):
         "Биография",
         blank=True,
     )
+
     role = models.CharField(
         "Пользовательская роль",
         max_length=200,
