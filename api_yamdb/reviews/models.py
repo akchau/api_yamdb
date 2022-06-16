@@ -3,12 +3,12 @@ from users.models import User
 
 
 class Categories(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=200)
     slug = models.SlugField()
 
 
 class Titles(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=200)
     year = models.IntegerField('Год выхода')
     category = models.ForeignKey(
         Categories,
@@ -18,7 +18,7 @@ class Titles(models.Model):
 
 
 class Genres(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=200)
     slug = models.SlugField()
 
 
