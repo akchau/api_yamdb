@@ -1,3 +1,5 @@
+"""Сериализаторы для модели пользователя."""
+
 from rest_framework import serializers
 
 from .models import User
@@ -13,6 +15,22 @@ class UserActivationSerializer(serializers.ModelSerializer):
         model = User
         fields = ("email", "username")
 
+    def validate_username(self, value):
+        """Проверка username !=me """
+        if value == 'me':
+            raise serializers.ValidationError(
+                "Использовать имя 'me' в качестве username запрещено."
+            )
+        return value
+
+    def validate_email(self, value):
+        """Проверка уникальности email."""
+        if User.objects.filter(email=value):
+            raise serializers.ValidationError(
+                "A user with that email already exists."
+            )
+        return value
+
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """
@@ -20,7 +38,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     """
 
     class Meta:
-        fields = ("email", "username")
+        fields = ("username", "confirmation_code")
         model = User
 
 
