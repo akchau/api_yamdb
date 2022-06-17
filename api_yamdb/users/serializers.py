@@ -16,8 +16,8 @@ class UserActivationSerializer(serializers.ModelSerializer):
         fields = ("email", "username")
 
     def validate_username(self, value):
-        """Проверка username !=me """
-        if value == 'me':
+        """Проверка username !=me"""
+        if value == "me":
             raise serializers.ValidationError(
                 "Использовать имя 'me' в качестве username запрещено."
             )
@@ -26,9 +26,7 @@ class UserActivationSerializer(serializers.ModelSerializer):
     def validate_email(self, value):
         """Проверка уникальности email."""
         if User.objects.filter(email=value):
-            raise serializers.ValidationError(
-                "A user with that email already exists."
-            )
+            raise serializers.ValidationError("A user with that email already exists.")
         return value
 
 
