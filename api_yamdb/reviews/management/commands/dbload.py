@@ -38,7 +38,6 @@ class Command(BaseCommand):
                 for row in reader:
                     if "titles.csv" in file:
                         cat = Categories.objects.get(id=row.pop('category'))
-                        print(row)
                         database.objects.create(category=cat, **row)
                     elif 'genre_title.csv' in file:
                         t_id = Titles.objects.get(id=row['title_id'])
