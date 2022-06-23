@@ -1,4 +1,5 @@
 from django.db import models
+
 from users.models import User
 
 
@@ -13,6 +14,7 @@ class Categories(models.Model):
     )
 
     class Meta:
+        ordering = ('id',)
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
@@ -31,6 +33,7 @@ class Genres(models.Model):
     )
 
     class Meta:
+        ordering = ('id',)
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
@@ -43,7 +46,7 @@ class Titles(models.Model):
         max_length=256,
         verbose_name='Название произведения'
     )
-    year = models.IntegerField(
+    year = models.PositiveIntegerField(
         verbose_name='Год выпуска'
     )
     description = models.TextField(
@@ -54,19 +57,19 @@ class Titles(models.Model):
     category = models.ForeignKey(
         Categories,
         on_delete=models.SET_NULL,
-        related_name='categories',
-        blank=True,
+        related_name='titles',
         null=True,
         verbose_name='Категория'
     )
-    genres = models.ManyToManyField(
+    genre = models.ManyToManyField(
         Genres,
         through='GenreTitle',
+        related_name='titles',
         verbose_name='Жанр'
     )
 
     class Meta:
-        ordering = ('name',)
+        ordering = ('id',)
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
@@ -87,15 +90,14 @@ class GenreTitle(models.Model):
     class Meta:
         verbose_name = 'Произведение-жанр'
         verbose_name_plural = 'Произведения-жанры'
-        unique_together = ('title_id', 'genre_id')
-        constraints = [
-            models.UniqueConstraint(fields=['title_id', 'genre_id'],
-                                    name='title_genre')
-        ]
 
 
 class Review(models.Model):
-    title_id = models.ForeignKey(Titles, on_delete=None)
+    title_id = models.ForeignKey(
+        Titles,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.IntegerField()

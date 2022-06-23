@@ -1,8 +1,11 @@
+from datetime import datetime
+
+from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
-# from rest_framework.validators import UniqueTogetherValidator
+
 from users.models import User
-from reviews.models import Review, Comments
+from reviews.models import Review, Comments, Categories, Genres, Titles
 
 
 class UserActivationSerializer(serializers.ModelSerializer):
@@ -58,3 +61,53 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('review_id',)
         model = Comments
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Categories
+        fields = ('name', 'slug')
+
+
+class GenresSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Genres
+        fields = ('name', 'slug')
+
+
+class TitlesSerializer(serializers.ModelSerializer):
+    category = SlugRelatedField(slug_field='slug',
+                                queryset=Categories.objects.all())
+    genre = SlugRelatedField(slug_field='slug', many=True,
+                             queryset=Genres.objects.all())
+
+    class Meta:
+        model = Titles
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
+
+    def validate_year(self, value):
+        year = datetime.now().year
+        if value > year:
+            raise serializers.ValidationError(
+                'Год выпуска не может быть больше текущего!'
+            )
+        return value
+
+
+class TitlesROSerializer(serializers.ModelSerializer):
+    category = CategoriesSerializer(read_only=True)
+    genre = GenresSerializer(read_only=True, many=True)
+    rating = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Titles
+        fields = ('id', 'name', 'year', 'rating', 'description', 'genre',
+                  'category')
+
+    def get_rating(self, obj):
+        avg_score = obj.reviews.aggregate(Avg('score'))['score__avg']
+        if avg_score is not None:
+            avg_score = round(avg_score)
+        return avg_score

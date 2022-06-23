@@ -1,14 +1,22 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
-from rest_framework import viewsets, views, status
+from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
+
 from users.models import User
-from reviews.models import Comments, Review
+from reviews.models import Comments, Review, Categories, Genres, Titles
 from .serializers import (
     ReviewSerializer,
     CommentSerializer,
     UserSerializer,
-    UserMeSerializer
+    UserMeSerializer,
+    CategoriesSerializer,
+    GenresSerializer,
+    TitlesSerializer,
+    TitlesROSerializer
 )
+from .custom_viewsets import ListCreateDeleteViewSet
+from .permissions import AdminOrReadOnly
+from .filters import TitleFilter
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -79,3 +87,34 @@ class CommentsViewSet(viewsets.ModelViewSet):
             id=self.kwargs.get("url_review_id")
         )
         serializer.save(author=author, review_id=comment)
+
+
+class CategoriesViewSet(ListCreateDeleteViewSet):
+    queryset = Categories.objects.all()
+    serializer_class = CategoriesSerializer
+    permission_classes = (AdminOrReadOnly,)
+    lookup_field = 'slug'
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
+
+class GenresViewSet(ListCreateDeleteViewSet):
+    queryset = Genres.objects.all()
+    serializer_class = GenresSerializer
+    permission_classes = (AdminOrReadOnly,)
+    lookup_field = 'slug'
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
+
+class TitlesViewSet(viewsets.ModelViewSet):
+    queryset = Titles.objects.all()
+    serializer_class = TitlesSerializer
+    permission_classes = (AdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitlesROSerializer
+        return TitlesSerializer
