@@ -1,3 +1,4 @@
+"""Сериализаторы приложения 'api'."""
 from datetime import datetime
 
 from django.db.models import Avg
@@ -10,8 +11,8 @@ from reviews.models import Review, Comments, Categories, Genres, Titles
 
 class UserActivationSerializer(serializers.ModelSerializer):
     """
-    Сериализатор для создания неподтвержденного польлзователя.
-    Управление пользователем. Отправка эмэйла."
+    Сериализатор для создания неподтвержденного пользователя.
+    Управление пользователем. Отправка эмэйла.
     """
 
     class Meta:
@@ -21,7 +22,7 @@ class UserActivationSerializer(serializers.ModelSerializer):
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """
-    Сериализатор для регистрации польлзователя."
+    Сериализатор для регистрации пользователя.
     """
 
     class Meta:
@@ -64,6 +65,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
+    """Сериализатор для категорий."""
 
     class Meta:
         model = Categories
@@ -71,6 +73,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
 
 class GenresSerializer(serializers.ModelSerializer):
+    """Сериализатор для жанров."""
 
     class Meta:
         model = Genres
@@ -78,6 +81,7 @@ class GenresSerializer(serializers.ModelSerializer):
 
 
 class TitlesSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания, обновления и удаления произведений."""
     category = SlugRelatedField(slug_field='slug',
                                 queryset=Categories.objects.all())
     genre = SlugRelatedField(slug_field='slug', many=True,
@@ -88,6 +92,7 @@ class TitlesSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'year', 'description', 'genre', 'category')
 
     def validate_year(self, value):
+        """Валидатор для поля года выпуска. Год выпуска - не больше текущего"""
         year = datetime.now().year
         if value > year:
             raise serializers.ValidationError(
@@ -97,6 +102,7 @@ class TitlesSerializer(serializers.ModelSerializer):
 
 
 class TitlesROSerializer(serializers.ModelSerializer):
+    """Сериализатор для чтения произведений."""
     category = CategoriesSerializer(read_only=True)
     genre = GenresSerializer(read_only=True, many=True)
     rating = serializers.SerializerMethodField()
@@ -107,6 +113,7 @@ class TitlesROSerializer(serializers.ModelSerializer):
                   'category')
 
     def get_rating(self, obj):
+        """Функция для создания вычисляемого поля 'Рейтинг' произведения."""
         avg_score = obj.reviews.aggregate(Avg('score'))['score__avg']
         if avg_score is not None:
             avg_score = round(avg_score)

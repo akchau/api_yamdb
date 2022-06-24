@@ -1,3 +1,4 @@
+"""Представления приложения 'api'."""
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -90,6 +91,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
 
 class CategoriesViewSet(ListCreateDeleteViewSet):
+    """Представление для работы с категориями."""
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
     permission_classes = (AdminOrReadOnly,)
@@ -99,6 +101,7 @@ class CategoriesViewSet(ListCreateDeleteViewSet):
 
 
 class GenresViewSet(ListCreateDeleteViewSet):
+    """Представление для работы с жанрами."""
     queryset = Genres.objects.all()
     serializer_class = GenresSerializer
     permission_classes = (AdminOrReadOnly,)
@@ -108,6 +111,7 @@ class GenresViewSet(ListCreateDeleteViewSet):
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
+    """Представление для работы с произведениями."""
     queryset = Titles.objects.all()
     serializer_class = TitlesSerializer
     permission_classes = (AdminOrReadOnly,)
@@ -115,6 +119,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
     filterset_class = TitleFilter
 
     def get_serializer_class(self):
+        """Функция выбора сериализатора."""
         if self.action in ('list', 'retrieve'):
             return TitlesROSerializer
         return TitlesSerializer

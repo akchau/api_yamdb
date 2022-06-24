@@ -1,3 +1,4 @@
+"""Разрешения приложения 'api'."""
 from rest_framework import permissions
 
 
@@ -7,8 +8,11 @@ class OnlyMe(permissions.BasePermission):
 
 
 class AdminOrReadOnly(permissions.BasePermission):
+    """Разрешения для чтения записей любым пользователем и создания,
+    изменения и удаления записей администратором и суперпользователем."""
 
     def has_permission(self, request, view):
+        """Функция разрешений на уровне запроса."""
         return (
                 request.method in permissions.SAFE_METHODS
                 or (request.user.is_authenticated

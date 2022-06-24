@@ -1,9 +1,11 @@
+"""Модели приложения 'reviews'."""
 from django.db import models
 
 from users.models import User
 
 
 class Categories(models.Model):
+    """Модель категорий."""
     name = models.CharField(
         max_length=256,
         verbose_name='Название категории'
@@ -23,6 +25,7 @@ class Categories(models.Model):
 
 
 class Genres(models.Model):
+    """Модель жанров."""
     name = models.CharField(
         max_length=256,
         verbose_name='Название жанра'
@@ -42,6 +45,7 @@ class Genres(models.Model):
 
 
 class Titles(models.Model):
+    """Модель произведений."""
     name = models.CharField(
         max_length=256,
         verbose_name='Название произведения'
@@ -78,6 +82,7 @@ class Titles(models.Model):
 
 
 class GenreTitle(models.Model):
+    """Модель связей произведений с жанрами."""
     title_id = models.ForeignKey(
         Titles,
         on_delete=models.CASCADE
@@ -93,6 +98,7 @@ class GenreTitle(models.Model):
 
 
 class Review(models.Model):
+    """Модель ревью."""
     title_id = models.ForeignKey(
         Titles,
         on_delete=models.CASCADE,
@@ -108,6 +114,7 @@ class Review(models.Model):
 
 
 class Comments(models.Model):
+    """Модель комментариев."""
     review_id = models.ForeignKey(Review, on_delete=models.CASCADE)
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
