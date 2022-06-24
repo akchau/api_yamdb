@@ -76,6 +76,10 @@ class Titles(models.Model):
         ordering = ('id',)
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'year', 'category'],
+                                    name='unique_title')
+        ]
 
     def __str__(self):
         return self.name

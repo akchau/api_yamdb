@@ -4,6 +4,7 @@ from datetime import datetime
 from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
+from rest_framework.validators import UniqueTogetherValidator
 
 from users.models import User
 from reviews.models import Review, Comments, Categories, Genres, Titles
@@ -90,6 +91,13 @@ class TitlesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Titles
         fields = ('id', 'name', 'year', 'description', 'genre', 'category')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Titles.objects.all(),
+                fields=('name', 'year', 'category'),
+                message='Произведение уже существует!'
+            )
+        ]
 
     def validate_year(self, value):
         """Валидатор для поля года выпуска. Год выпуска - не больше текущего"""
