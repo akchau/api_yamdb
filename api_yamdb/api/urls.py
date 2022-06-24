@@ -7,14 +7,14 @@ app_name = "api"
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
-router.register(r'users/me/', UserMeView, basename='')
+router.register(r'users/me', UserMeView, basename='')
 router.register(
-    r'titles/(?P<url_title_id>\d+)/reviews/',
+    r'titles/(?P<url_title_id>\d+)/reviews',
     ReviewViewSet,
     basename='reviews'
 )
 router.register(
-    r'titles/(?P<url_title_id>\d+)/reviews/(?P<url_review_id>\d+)/comments/',
+    r'titles/(?P<url_title_id>\d+)/reviews/(?P<url_review_id>\d+)/comments',
     CommentsViewSet,
     basename='comments'
 )

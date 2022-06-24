@@ -47,7 +47,7 @@ class Command(BaseCommand):
                         t_id = Titles.objects.get(id=row.pop('title_id'))
                         usr = User.objects.get(id=row.pop('author'))
                         database.objects.create(
-                            title_id=t_id,
+                            title=t_id,
                             author=usr,
                             **row
                         )
@@ -55,7 +55,7 @@ class Command(BaseCommand):
                         r_id = Review.objects.get(id=row.pop('review_id'))
                         usr = User.objects.get(id=row.pop('author'))
                         database.objects.create(
-                            review_id=r_id,
+                            review=r_id,
                             author=usr,
                             **row)
                     else:

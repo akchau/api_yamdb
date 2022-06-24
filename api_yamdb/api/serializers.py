@@ -3,6 +3,7 @@ from rest_framework.relations import SlugRelatedField
 # from rest_framework.validators import UniqueTogetherValidator
 from users.models import User
 from reviews.models import Review, Comments
+from django.db.models import Avg
 
 
 class UserActivationSerializer(serializers.ModelSerializer):
@@ -44,17 +45,25 @@ class UserMeSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(read_only=True, slug_field='username')
+    score = serializers.SerializerMethodField()
 
     class Meta:
-        fields = '__all__'
-        read_only_fields = ('title_id',)
+        fields = ('id', 'text', 'author', 'score', 'pub_date',)
+        read_only_fields = ('title',)
         model = Review
+
+    def get_score(self, obj):
+        return int(
+            Review.objects.filter(
+                title=obj.title.id
+            ).aggregate(Avg("score"))["score__avg"]
+        )
 
 
 class CommentSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(read_only=True, slug_field='username')
 
     class Meta:
-        fields = '__all__'
-        read_only_fields = ('review_id',)
+        fields = ('id', 'text', 'author', 'pub_date',)
+        read_only_fields = ('review',)
         model = Comments
