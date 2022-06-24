@@ -1,11 +1,11 @@
 """Сериализаторы для модели пользователя."""
-
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import User
+User = get_user_model()
 
 
-class UserActivationSerializer(serializers.ModelSerializer):
+class RegistrationSerializer(serializers.ModelSerializer):
     """
     Сериализатор для создания неподтвержденного польлзователя.
     Управление пользователем. Отправка эмэйла."
@@ -17,40 +17,29 @@ class UserActivationSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         """Проверка username !=me"""
-        if value == "me":
+        if value.lower() == "me":
             raise serializers.ValidationError(
                 "Использовать имя 'me' в качестве username запрещено."
             )
         return value
 
-    def validate_email(self, value):
-        """Проверка уникальности email."""
-        if User.objects.filter(email=value):
-            raise serializers.ValidationError("A user with that email already exists.")
-        return value
 
-
-class UserRegistrationSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для регистрации польлзователя."
-    """
-
-    class Meta:
-        fields = ("username", "confirmation_code")
-        model = User
+class TokenSerializer(serializers.Serializer):
+    """Сериализатор для авторизации пользователя."""
+    username = serializers.CharField(max_length=255)
+    confirmation_code = serializers.CharField(max_length=128)
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Сериализатор для админа. Управление пользователем."""
+    """Сериализатор управления пользователем."""
 
     class Meta:
         model = User
-        fields = ("username", "email", "first_name", "last_name", "bio", "role")
-
-
-class UserMeSerializer(serializers.ModelSerializer):
-    """Сериализатор для просмотра и редактирования своих данных."""
-
-    class Meta:
-        model = User
-        fields = ("username", "email", "first_name", "last_name", "bio", "role")
+        fields = (
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "bio",
+            "role"
+        )

@@ -1,17 +1,21 @@
-"""urls приложения users."""
+"""Роутер приложения users."""
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from django.urls import path, include
 
-from .views import UserViewSet, UserMeView, UserActivationView
+from .views import RegisterView, TokenView, UserMeView, UserViewSet
 
 app_name = "users"
 
 router = DefaultRouter()
 router.register(r"users", UserViewSet)
 
-
 urlpatterns = [
-    path("v1/auth/signup/", UserActivationView.as_view()),
+    path("v1/auth/signup/", RegisterView.as_view()),
+    path(
+        'v1/auth/token/',
+        TokenView.as_view(),
+        name='token_obtain_pair'
+    ),
     path("v1/users/me/", UserMeView.as_view()),
     path("v1/", include(router.urls)),
 ]
