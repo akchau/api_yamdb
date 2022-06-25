@@ -1,14 +1,24 @@
 from django.shortcuts import get_object_or_404
+from rest_framework.pagination import LimitOffsetPagination
+from .permissions import AuthorOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import viewsets, views, status
 from users.models import User
-from reviews.models import Comments, Review
+from reviews.models import Comments, Review, Titles
 from .serializers import (
     ReviewSerializer,
     CommentSerializer,
     UserSerializer,
     UserMeSerializer
 )
+
+
+def get_usr(self):
+    return get_object_or_404(
+        User,
+        username=self.request.user,
+    )
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -53,19 +63,19 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         url_title_id = self.kwargs.get("url_title_id")
-        return Comments.objects.filter(title_id=url_title_id)
+        return Review.objects.filter(title_id=url_title_id)
 
     def perform_create(self, serializer):
-        author = self.request.user
-        review = get_object_or_404(
-            Review,
+        title = get_object_or_404(
+            Titles,
             id=self.kwargs.get("url_title_id")
         )
-        serializer.save(author=author, title_id=review)
+        serializer.save(author=get_usr(self), title_id=title)
 
 
 class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    pagination_class = LimitOffsetPagination
     # permission_classes = (AuthorOrReadOnly,)
 
     def get_queryset(self):
@@ -73,9 +83,8 @@ class CommentsViewSet(viewsets.ModelViewSet):
         return Comments.objects.filter(review_id=url_review_id)
 
     def perform_create(self, serializer):
-        author = self.request.user
-        comment = get_object_or_404(
-            Comments,
+        review = get_object_or_404(
+            Review,
             id=self.kwargs.get("url_review_id")
         )
-        serializer.save(author=author, review_id=comment)
+        serializer.save(author=get_usr(self), review_id=review)
