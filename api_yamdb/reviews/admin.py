@@ -1,7 +1,7 @@
 """Админка приложения 'reviews'."""
 from django.contrib import admin
 
-from .models import Categories, Genres, Titles, GenreTitle, Review, Comments
+from .models import Categories, Genres, Title, GenreTitle, Review, Comments
 
 
 class CategoriesAdmin(admin.ModelAdmin):
@@ -20,7 +20,7 @@ class GenresAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-class TitlesAdmin(admin.ModelAdmin):
+class TitleAdmin(admin.ModelAdmin):
     """Админка произведений."""
     list_display = ('id', 'name', 'year', 'description', 'category',)
     list_editable = ('category',)
@@ -38,8 +38,8 @@ class GenreTitleAdmin(admin.ModelAdmin):
 
 class ReviewAdmin(admin.ModelAdmin):
     """Админка ревью."""
-    list_display = ('id', 'title_id', 'text', 'author', 'score', 'pub_date',)
-    list_editable = ('title_id', 'author',)
+    list_display = ('id', 'title', 'text', 'author', 'score', 'pub_date',)
+    list_editable = ('title', 'author',)
     search_fields = ('text',)
     list_filter = ('author',)
     empty_value_display = '-пусто-'
@@ -56,7 +56,7 @@ class CommentsAdmin(admin.ModelAdmin):
 
 admin.site.register(Categories, CategoriesAdmin)
 admin.site.register(Genres, GenresAdmin)
-admin.site.register(Titles, TitlesAdmin)
+admin.site.register(Title, TitleAdmin)
 admin.site.register(GenreTitle, GenreTitleAdmin)
 admin.site.register(Review, ReviewAdmin)
 admin.site.register(Comments, CommentsAdmin)

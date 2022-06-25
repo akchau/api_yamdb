@@ -5,7 +5,7 @@ from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
-from reviews.models import Categories, Comments, Genres, Review, Titles
+from reviews.models import Categories, Comments, Genres, Review, Title
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
@@ -24,7 +24,7 @@ class GenresSerializer(serializers.ModelSerializer):
         fields = ('name', 'slug')
 
 
-class TitlesSerializer(serializers.ModelSerializer):
+class TitleSerializer(serializers.ModelSerializer):
     """Сериализатор для создания, обновления и удаления произведений."""
     category = SlugRelatedField(slug_field='slug',
                                 queryset=Categories.objects.all())
@@ -32,11 +32,11 @@ class TitlesSerializer(serializers.ModelSerializer):
                              queryset=Genres.objects.all())
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ('id', 'name', 'year', 'description', 'genre', 'category')
         validators = [
             UniqueTogetherValidator(
-                queryset=Titles.objects.all(),
+                queryset=Title.objects.all(),
                 fields=('name', 'year', 'category'),
                 message='Произведение уже существует!'
             )
@@ -52,25 +52,25 @@ class TitlesSerializer(serializers.ModelSerializer):
         return value
 
 
-class TitlesROSerializer(serializers.ModelSerializer):
+class TitleROSerializer(serializers.ModelSerializer):
     """Сериализатор для чтения произведений."""
     category = CategoriesSerializer(read_only=True)
     genre = GenresSerializer(read_only=True, many=True)
     rating = serializers.SerializerMethodField()
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre',
                   'category')
 
     def get_rating(self, obj):
         """Функция для создания вычисляемого поля 'Рейтинг' произведения."""
         rating = Review.objects.filter(
-                title_id=obj.id
-            ).aggregate(Avg("score"))["score__avg"]
-        
+            title_id=obj.id
+        ).aggregate(Avg("score"))["score__avg"]
         if rating:
             return round(rating)
+        return None
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -78,14 +78,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'text', 'author', 'score', 'pub_date',)
-        read_only_fields = ('title_id',)
+        read_only_fields = ('title',)
         model = Review
-        # validators = [
-        #     UniqueTogetherValidator(
-        #         queryset=Review.objects.all(),
-        #         fields=('title_id', 'author',),
-        #         message='Отзыв уже существует!'
-        #     )]
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -95,4 +89,3 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'text', 'author', 'pub_date',)
         read_only_fields = ('review_id)',)
         model = Comments
-    

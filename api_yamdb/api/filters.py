@@ -1,7 +1,7 @@
 """Фильтрация приложения 'api'."""
 import django_filters as filters
 
-from reviews.models import Titles
+from reviews.models import Title
 
 
 class TitleFilter(filters.FilterSet):
@@ -13,5 +13,5 @@ class TitleFilter(filters.FilterSet):
     genre = filters.CharFilter(field_name='genre__slug', lookup_expr='exact')
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ['name', 'year', 'category', 'genre']

@@ -2,7 +2,7 @@ import csv
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from reviews.models import (
-    Titles,
+    Title,
     Genres,
     GenreTitle,
     User,
@@ -26,7 +26,7 @@ class Command(BaseCommand):
             'users.csv': User,
             'category.csv': Categories,
             'genre.csv': Genres,
-            'titles.csv': Titles,
+            'titles.csv': Title,
             'genre_title.csv': GenreTitle,
             'review.csv': Review,
             'comments.csv': Comments,
@@ -40,14 +40,14 @@ class Command(BaseCommand):
                         cat = Categories.objects.get(id=row.pop('category'))
                         database.objects.create(category=cat, **row)
                     elif 'genre_title.csv' in file:
-                        t_id = Titles.objects.get(id=row['title_id'])
+                        t_id = Title.objects.get(id=row['title_id'])
                         g_id = Genres.objects.get(id=row['genre_id'])
                         database.objects.create(title_id=t_id, genre_id=g_id)
                     elif 'review.csv' in file:
-                        t_id = Titles.objects.get(id=row.pop('title_id'))
+                        t_id = Title.objects.get(id=row.pop('title_id'))
                         usr = User.objects.get(id=row.pop('author'))
                         database.objects.create(
-                            title_id=t_id,
+                            title=t_id,
                             author=usr,
                             **row
                         )
