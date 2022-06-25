@@ -96,7 +96,7 @@ class GenreTitle(models.Model):
 
 
 class Review(models.Model):
-    title = models.ForeignKey(Titles, models.CASCADE)
+    title_id = models.ForeignKey(Titles, models.CASCADE)
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.IntegerField(
@@ -112,7 +112,7 @@ class Review(models.Model):
 
 
 class Comments(models.Model):
-    review = models.ForeignKey(Review, models.CASCADE)
+    review_id = models.ForeignKey(Review, models.CASCADE)
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     pub_date = models.DateTimeField(

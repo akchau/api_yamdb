@@ -49,13 +49,13 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'text', 'author', 'score', 'pub_date',)
-        read_only_fields = ('title',)
+        read_only_fields = ('title_id',)
         model = Review
 
     def get_score(self, obj):
         return int(
             Review.objects.filter(
-                title=obj.title.id
+                title_id=obj.title_id.id
             ).aggregate(Avg("score"))["score__avg"]
         )
 
@@ -65,5 +65,5 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = ('id', 'text', 'author', 'pub_date',)
-        read_only_fields = ('review',)
+        read_only_fields = ('review_id)',)
         model = Comments
