@@ -1,8 +1,9 @@
 """Представления приложения 'api'."""
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponseBadRequest
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.core.exceptions import ObjectDoesNotExist
 from users.models import CustomUser as User
 from reviews.models import Comments, Review, Categories, Genres, Titles
 from rest_framework.pagination import LimitOffsetPagination
@@ -99,11 +100,22 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return Review.objects.filter(title_id=url_title_id)
 
     def perform_create(self, serializer):
+        obj = ""
         title = get_object_or_404(
             Titles,
             id=self.kwargs.get("url_title_id")
         )
-        serializer.save(author=get_usr(self), title_id=title)
+        try:
+            obj = Review.objects.get(
+                title_id=self.kwargs.get("url_title_id"),
+                author=get_usr(self)
+            )
+        except ObjectDoesNotExist:
+            pass
+        if obj:
+            return HttpResponseBadRequest("Отзыв уже существует!")
+        else:
+            return serializer.save(author=get_usr(self), title_id=title)
 
 
 class CommentsViewSet(viewsets.ModelViewSet):

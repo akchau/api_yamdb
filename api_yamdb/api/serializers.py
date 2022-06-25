@@ -106,11 +106,11 @@ class TitlesROSerializer(serializers.ModelSerializer):
     def get_rating(self, obj):
         """Функция для создания вычисляемого поля 'Рейтинг' произведения."""
         rating = Review.objects.filter(
-                title_id=obj.id
-            ).aggregate(Avg("score"))["score__avg"]
-        
+            title_id=obj.id
+        ).aggregate(Avg("score"))["score__avg"]
         if rating:
             return round(rating)
+        return None
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -127,6 +127,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         #         message='Отзыв уже существует!'
         #     )]
 
+
 class CommentSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(read_only=True, slug_field='username')
 
@@ -134,4 +135,3 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'text', 'author', 'pub_date',)
         read_only_fields = ('review_id)',)
         model = Comments
-    
