@@ -45,7 +45,7 @@ class Genres(models.Model):
         return self.slug
 
 
-class Titles(models.Model):
+class Title(models.Model):
     """Модель произведений."""
     name = models.CharField(
         max_length=256,
@@ -89,7 +89,7 @@ class Titles(models.Model):
 class GenreTitle(models.Model):
     """Модель связей произведений с жанрами."""
     title_id = models.ForeignKey(
-        Titles,
+        Title,
         on_delete=models.CASCADE
     )
     genre_id = models.ForeignKey(
@@ -103,7 +103,7 @@ class GenreTitle(models.Model):
 
 
 class Review(models.Model):
-    title_id = models.ForeignKey(Titles, models.CASCADE)
+    title = models.ForeignKey(Title, models.CASCADE)
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.IntegerField(
@@ -120,8 +120,7 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'отзывы'
-        unique_together = ('title_id', 'author')
-
+        unique_together = ('title', 'author')
 
 
 class Comments(models.Model):

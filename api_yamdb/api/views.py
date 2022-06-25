@@ -5,21 +5,21 @@ from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django.core.exceptions import ObjectDoesNotExist
 from users.models import CustomUser as User
-from reviews.models import Comments, Review, Categories, Genres, Titles
+from reviews.models import Comments, Review, Categories, Genres, Title
 from rest_framework.pagination import LimitOffsetPagination
 from .permissions import AuthorOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from rest_framework import viewsets, views, status
-from reviews.models import Comments, Review, Titles
+from reviews.models import Comments, Review, Title
 from .serializers import (
     ReviewSerializer,
     CommentSerializer,
     CategoriesSerializer,
     GenresSerializer,
-    TitlesSerializer,
-    TitlesROSerializer
+    TitleSerializer,
+    TitleROSerializer
 )
 from .custom_viewsets import ListCreateDeleteViewSet
 from .permissions import AdminOrReadOnly
@@ -53,10 +53,10 @@ class GenresViewSet(ListCreateDeleteViewSet):
     search_fields = ('name',)
 
 
-class TitlesViewSet(viewsets.ModelViewSet):
+class TitleViewSet(viewsets.ModelViewSet):
     """Представление для работы с произведениями."""
-    queryset = Titles.objects.all()
-    serializer_class = TitlesSerializer
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
@@ -64,8 +64,8 @@ class TitlesViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         """Функция выбора сериализатора."""
         if self.action in ('list', 'retrieve'):
-            return TitlesROSerializer
-        return TitlesSerializer
+            return TitleROSerializer
+        return TitleSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -79,20 +79,20 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         obj = ""
         title = get_object_or_404(
-            Titles,
+            Title,
             id=self.kwargs.get("url_title_id")
         )
         try:
             obj = Review.objects.get(
-                title_id=self.kwargs.get("url_title_id"),
+                title_id=title,
                 author=get_usr(self)
             )
         except ObjectDoesNotExist:
             pass
         if obj:
-            return HttpResponseBadRequest("Отзыв уже существует!")
+            raise ParseError("Отзыв уже существует!")
         else:
-            return serializer.save(author=get_usr(self), title_id=title)
+            serializer.save(author=get_usr(self), title=title)
 
 
 class CommentsViewSet(viewsets.ModelViewSet):
