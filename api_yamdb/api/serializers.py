@@ -5,47 +5,7 @@ from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
-
-from users.models import CustomUser as User
-from reviews.models import Review, Comments, Categories, Genres, Titles
-from django.db.models import Avg
-
-
-class UserActivationSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для создания неподтвержденного пользователя.
-    Управление пользователем. Отправка эмэйла.
-    """
-
-    class Meta:
-        model = User
-        fields = ("email", "username")
-
-
-class UserRegistrationSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для регистрации пользователя.
-    """
-
-    class Meta:
-        fields = ("email", "username")
-        model = User
-
-
-class UserSerializer(serializers.ModelSerializer):
-    """Сериализатор для админа. Управление пользователем."""
-
-    class Meta:
-        model = User
-        fields = ("username", "email", "first_name", "last_name", "bio", "role")
-
-
-class UserMeSerializer(serializers.ModelSerializer):
-    """Сериализатор для просмотра и редактирования своих данных."""
-
-    class Meta:
-        model = User
-        fields = ("username", "email", "first_name", "last_name", "bio", "role")
+from reviews.models import Categories, Comments, Genres, Review, Titles
 
 
 class CategoriesSerializer(serializers.ModelSerializer):

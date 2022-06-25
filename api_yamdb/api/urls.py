@@ -9,7 +9,7 @@ from users.views import RegisterView, TokenView, UserMeView, UserViewSet
 app_name = "api"
 
 router = DefaultRouter()
-router.register(r"users", UserViewSet)
+router.register(r"users", UserViewSet, basename='users')
 router.register(r'categories', CategoriesViewSet, basename='categories')
 router.register(r'genres', GenresViewSet, basename='genres')
 router.register(r'titles', TitlesViewSet, basename='titles')
