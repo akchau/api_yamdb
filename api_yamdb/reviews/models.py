@@ -2,7 +2,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from users.models import User
+from users.models import CustomUser as User
 
 
 class Categories(models.Model):
@@ -116,6 +116,12 @@ class Review(models.Model):
         'Дата публикации, отзыва',
         auto_now_add=True
     )
+
+    class Meta:
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'отзывы'
+        unique_together = ('title_id', 'author')
+
 
 
 class Comments(models.Model):
