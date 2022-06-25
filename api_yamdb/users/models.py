@@ -1,17 +1,58 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+CHOICES_ROLE = (
+    ("user", "user"),
+    ("moderator", "moderator"),
+    ("admin", "admin"),
+)
 
-class User(AbstractUser):
-    "Кастомный класс юзера"
-    email = models.EmailField(blank=False)
+
+class CustomUser(AbstractUser):
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        help_text=('Required. 150 characters or fewer.',
+                   'Letters, digits and @/./+/-/_ only.'),
+        error_messages={
+            'unique': "Полльзователь с таким email уже существует.",
+        },
+    )
+    email = models.EmailField(
+        unique=True,
+        error_messages={
+            'unique': "Полльзователь с таким email уже существует.",
+        },
+    )
+    first_name = models.CharField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    last_name = models.CharField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
+    date_joined = models.DateTimeField(
+        auto_now_add=True
+    )
     bio = models.TextField(
-        "Биография",
+        null=True,
         blank=True,
+    )
+    role = models.CharField(
+        max_length=10,
+        default="user",
+        choices=CHOICES_ROLE,
     )
 
-    role = models.CharField(
-        "Пользовательская роль",
-        max_length=200,
-        blank=True,
-    )
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
+
+    class Meta:
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
+
+    def __str__(self):
+        return self.username

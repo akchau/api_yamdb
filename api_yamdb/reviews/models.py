@@ -1,4 +1,5 @@
 """Модели приложения 'reviews'."""
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from users.models import User
@@ -102,15 +103,15 @@ class GenreTitle(models.Model):
 
 
 class Review(models.Model):
-    """Модель ревью."""
-    title_id = models.ForeignKey(
-        Titles,
-        on_delete=models.CASCADE,
-        related_name='reviews'
-    )
+    title_id = models.ForeignKey(Titles, models.CASCADE)
     text = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    score = models.IntegerField()
+    score = models.IntegerField(
+        validators=[
+            MaxValueValidator(10),
+            MinValueValidator(1)
+        ]
+    )
     pub_date = models.DateTimeField(
         'Дата публикации, отзыва',
         auto_now_add=True
