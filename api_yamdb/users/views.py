@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 
-from .permissions import OnlyAdminOrModerator, OnlyAdminCanGiveRole
+from .permissions import OnlyAdmin, OnlyAdminCanGiveRole
 from .serializers import (RegistrationSerializer,
                           TokenSerializer,
                           UserSerializer)
@@ -79,7 +79,7 @@ class UserViewSet(viewsets.ModelViewSet):
     Только для админа.
     """
 
-    permission_classes = (OnlyAdminOrModerator, OnlyAdminCanGiveRole, )
+    permission_classes = (OnlyAdmin, )
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "username"
@@ -92,18 +92,19 @@ class UserMeView(APIView):
     """
     Вью-класс для работы с данными пользователя.
     """
-    permission_classes = (OnlyAdminCanGiveRole, )
+    permission_classes = (OnlyAdminCanGiveRole,)
 
     def get(self, request):
         """Функция возвращает данные пользователя."""
         username = request.user.username
         user = get_object_or_404(User, username=username)
         serializer = UserSerializer(user)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request):
         """Функция апдейтит данные пользователя, если они валидны."""
-        user = get_object_or_404(User, id=1)
+        username = request.user.username
+        user = get_object_or_404(User, username=username)
         serializer = UserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
