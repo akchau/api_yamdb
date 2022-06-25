@@ -15,8 +15,6 @@ from reviews.models import Comments, Review, Titles
 from .serializers import (
     ReviewSerializer,
     CommentSerializer,
-    UserSerializer,
-    UserMeSerializer,
     CategoriesSerializer,
     GenresSerializer,
     TitlesSerializer,
@@ -32,27 +30,6 @@ def get_usr(self):
         User,
         username=self.request.user,
     )
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    Вью-сет для работы с пользователем.
-    Только для админа.
-    """
-
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
-
-
-class UserMeView(viewsets.ModelViewSet):
-    """
-    Вью-сет для работы с данными пользователя.
-    """
-    serializer_class = UserMeSerializer
-
-    def get_queryset(self):
-        user = self.request.user.id
-        return get_object_or_404(User, id=user)
 
 
 class CategoriesViewSet(ListCreateDeleteViewSet):

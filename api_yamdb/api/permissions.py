@@ -2,11 +2,6 @@
 from rest_framework import permissions
 
 
-class OnlyMe(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return obj == request.user
-
-
 class AdminOrReadOnly(permissions.BasePermission):
     """Разрешения для чтения записей любым пользователем и создания,
     изменения и удаления записей администратором и суперпользователем."""

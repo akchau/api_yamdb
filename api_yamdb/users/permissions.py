@@ -19,3 +19,4 @@ class OnlyAdminCanGiveRole(permissions.BasePermission):
             and request.user.role == 'admin'
             or (not request.data.get('role'))
         )
+    
