@@ -8,6 +8,7 @@ from reviews.models import Comments, Review, Categories, Genres, Titles
 from rest_framework.pagination import LimitOffsetPagination
 from .permissions import AuthorOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from rest_framework import viewsets, views, status
 from reviews.models import Comments, Review, Titles
@@ -91,7 +92,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    # permission_classes = (AuthorOrReadOnly,)
+    permission_classes = (AuthorOrReadOnly,)
 
     def get_queryset(self):
         url_title_id = self.kwargs.get("url_title_id")
@@ -108,7 +109,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     pagination_class = LimitOffsetPagination
-    # permission_classes = (AuthorOrReadOnly,)
+    permission_classes = (AuthorOrReadOnly,)
 
     def get_queryset(self):
         url_review_id = self.kwargs.get("url_review_id")

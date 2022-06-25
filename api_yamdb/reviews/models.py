@@ -117,6 +117,12 @@ class Review(models.Model):
         auto_now_add=True
     )
 
+    class Meta:
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'отзывы'
+        unique_together = ('title_id', 'author')
+
+
 
 class Comments(models.Model):
     """Модель комментариев."""

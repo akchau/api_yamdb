@@ -48,32 +48,6 @@ class UserMeSerializer(serializers.ModelSerializer):
         fields = ("username", "email", "first_name", "last_name", "bio", "role")
 
 
-class ReviewSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(read_only=True, slug_field='username')
-    score = serializers.SerializerMethodField()
-
-    class Meta:
-        fields = ('id', 'text', 'author', 'score', 'pub_date',)
-        read_only_fields = ('title_id',)
-        model = Review
-
-    def get_score(self, obj):
-        return int(
-            Review.objects.filter(
-                title_id=obj.title_id.id
-            ).aggregate(Avg("score"))["score__avg"]
-        )
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(read_only=True, slug_field='username')
-
-    class Meta:
-        fields = ('id', 'text', 'author', 'pub_date',)
-        read_only_fields = ('review_id)',)
-        model = Comments
-
-
 class CategoriesSerializer(serializers.ModelSerializer):
     """Сериализатор для категорий."""
 
@@ -131,7 +105,33 @@ class TitlesROSerializer(serializers.ModelSerializer):
 
     def get_rating(self, obj):
         """Функция для создания вычисляемого поля 'Рейтинг' произведения."""
-        avg_score = obj.reviews.aggregate(Avg('score'))['score__avg']
-        if avg_score is not None:
-            avg_score = round(avg_score)
-        return avg_score
+        rating = Review.objects.filter(
+                title_id=obj.id
+            ).aggregate(Avg("score"))["score__avg"]
+        
+        if rating:
+            return round(rating)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    author = SlugRelatedField(read_only=True, slug_field='username')
+
+    class Meta:
+        fields = ('id', 'text', 'author', 'score', 'pub_date',)
+        read_only_fields = ('title_id',)
+        model = Review
+        # validators = [
+        #     UniqueTogetherValidator(
+        #         queryset=Review.objects.all(),
+        #         fields=('title_id', 'author',),
+        #         message='Отзыв уже существует!'
+        #     )]
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = SlugRelatedField(read_only=True, slug_field='username')
+
+    class Meta:
+        fields = ('id', 'text', 'author', 'pub_date',)
+        read_only_fields = ('review_id)',)
+        model = Comments
+    
