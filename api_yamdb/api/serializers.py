@@ -6,7 +6,7 @@ from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
 
-from users.models import User
+from users.models import CustomUser as User
 from reviews.models import Review, Comments, Categories, Genres, Titles
 from django.db.models import Avg
 

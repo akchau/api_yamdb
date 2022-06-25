@@ -3,14 +3,13 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 
-from users.models import User
+from users.models import CustomUser as User
 from reviews.models import Comments, Review, Categories, Genres, Titles
 from rest_framework.pagination import LimitOffsetPagination
 from .permissions import AuthorOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import viewsets, views, status
-from users.models import User
 from reviews.models import Comments, Review, Titles
 from .serializers import (
     ReviewSerializer,
