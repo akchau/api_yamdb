@@ -1,7 +1,8 @@
-"""urls приложения api."""
+"""Эндпойнты приложения 'api'."""
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import UserViewSet, UserMeView, CommentsViewSet, ReviewViewSet
+from .views import (UserViewSet, UserMeView, CommentsViewSet, ReviewViewSet,
+                    CategoriesViewSet, GenresViewSet, TitlesViewSet)
 
 app_name = "api"
 
@@ -18,6 +19,9 @@ router.register(
     CommentsViewSet,
     basename='comments'
 )
+router.register(r'categories', CategoriesViewSet, basename='categories')
+router.register(r'genres', GenresViewSet, basename='genres')
+router.register(r'titles', TitlesViewSet, basename='titles')
 
 urlpatterns = [
     path("v1/", include(router.urls)),

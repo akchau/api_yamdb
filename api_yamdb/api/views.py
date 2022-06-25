@@ -1,4 +1,10 @@
+"""Представления приложения 'api'."""
 from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
+
+from users.models import User
+from reviews.models import Comments, Review, Categories, Genres, Titles
 from rest_framework.pagination import LimitOffsetPagination
 from .permissions import AuthorOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -10,8 +16,15 @@ from .serializers import (
     ReviewSerializer,
     CommentSerializer,
     UserSerializer,
-    UserMeSerializer
+    UserMeSerializer,
+    CategoriesSerializer,
+    GenresSerializer,
+    TitlesSerializer,
+    TitlesROSerializer
 )
+from .custom_viewsets import ListCreateDeleteViewSet
+from .permissions import AdminOrReadOnly
+from .filters import TitleFilter
 
 
 def get_usr(self):
@@ -41,20 +54,40 @@ class UserMeView(viewsets.ModelViewSet):
         user = self.request.user.id
         return get_object_or_404(User, id=user)
 
-    # def get(self, request):
-    #     """Функция возвращает данные пользователя."""
-    #     user = get_object_or_404(User, id=1)
-    #     serializer = UserMeSerializer(user)
-    #     return Response(serializer.data)
 
-    # def patch(self, request):
-    #     """Функция апдейтит данные пользователя, если они валидны."""
-    #     user = get_object_or_404(User, id=1)
-    #     serializer = UserMeSerializer(user, data=request.data, partial=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_200_OK)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class CategoriesViewSet(ListCreateDeleteViewSet):
+    """Представление для работы с категориями."""
+    queryset = Categories.objects.all()
+    serializer_class = CategoriesSerializer
+    permission_classes = (AdminOrReadOnly,)
+    lookup_field = 'slug'
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
+
+class GenresViewSet(ListCreateDeleteViewSet):
+    """Представление для работы с жанрами."""
+    queryset = Genres.objects.all()
+    serializer_class = GenresSerializer
+    permission_classes = (AdminOrReadOnly,)
+    lookup_field = 'slug'
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
+
+class TitlesViewSet(viewsets.ModelViewSet):
+    """Представление для работы с произведениями."""
+    queryset = Titles.objects.all()
+    serializer_class = TitlesSerializer
+    permission_classes = (AdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
+
+    def get_serializer_class(self):
+        """Функция выбора сериализатора."""
+        if self.action in ('list', 'retrieve'):
+            return TitlesROSerializer
+        return TitlesSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
