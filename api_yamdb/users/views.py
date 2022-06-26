@@ -17,6 +17,7 @@ from .serializers import (RegistrationSerializer,
                           TokenSerializer,
                           UserSerializer)
 
+
 User = get_user_model()
 
 
