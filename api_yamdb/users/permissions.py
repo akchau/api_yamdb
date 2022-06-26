@@ -6,8 +6,8 @@ class OnlyAdmin(permissions.BasePermission):
     """Зона управления пользователями для админов и модераторов."""
     def has_permission(self, request, view):
         return (
-            request.user.is_authenticated and 
-            request.user.role == "admin"
+            request.user.is_authenticated
+            and request.user.role == "admin"
         )
 
 

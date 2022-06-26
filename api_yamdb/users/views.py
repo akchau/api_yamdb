@@ -63,14 +63,15 @@ class TokenView(APIView):
     def post(self, request):
         """Получение токена при POST-запросе."""
         serializer = TokenSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid() and serializer.data:
             username = serializer.validated_data['username']
             user = get_object_or_404(User, username=username)
             if default_token_generator.check_token(
                 user, serializer.validated_data['confirmation_code']
             ):
                 token = AccessToken.for_user(user)
-        return Response({"token": str(token)}, status.HTTP_200_OK)
+                return Response({"token": str(token)}, status.HTTP_200_OK)
+        return Response("Пустой запрос", status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):
