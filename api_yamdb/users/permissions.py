@@ -1,5 +1,6 @@
 """Разрешения для работы с пользователями."""
 from rest_framework import permissions
+from rest_framework.views import exceptions
 
 
 class OnlyAdmin(permissions.BasePermission):
@@ -14,6 +15,8 @@ class OnlyAdmin(permissions.BasePermission):
 class OnlyAdminCanGiveRole(permissions.BasePermission):
     """Поле role может менять себе и другием только админ."""
     def has_permission(self, request, view,):
+        if request.user.is_anonymous or request.user.role == 'user':
+            raise exceptions.NotAuthenticated()
         return (
             request.method in permissions.SAFE_METHODS
             or request.data.get('role')
