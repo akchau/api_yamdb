@@ -27,7 +27,7 @@ class OnlyAdminCanGiveRole(permissions.BasePermission):
         ):
             return True
         else:
-            raise exceptions.NotAuthenticated()
+            raise exceptions.NotAuthenticated(detail={"role": 'user'})
 
 
 class OnlyUser(permissions.BasePermission):
