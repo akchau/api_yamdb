@@ -1,5 +1,6 @@
 """Разрешения для работы с пользователями."""
-from rest_framework import permissions
+from rest_framework import permissions, status
+from rest_framework.response import Response
 from rest_framework.views import exceptions
 
 
@@ -17,12 +18,19 @@ class OnlyAdminCanGiveRole(permissions.BasePermission):
     def has_permission(self, request, view,):
         if request.user.is_anonymous:
             raise exceptions.NotAuthenticated()
-        return (
+        if (
             request.method in permissions.SAFE_METHODS
             or request.data.get('role')
             and request.user.role == 'admin'
             or (not request.data.get('role'))
-        )
+        ):
+            return True
+        else:
+            _mutable = request.data._mutable
+            request.data._mutable = True
+            request.data['role'] = 'user'
+            request.data._mutable = _mutable
+            return Response(None, status=status.HTTP_403_FORBIDDEN)
 
 
 class OnlyUser(permissions.BasePermission):
