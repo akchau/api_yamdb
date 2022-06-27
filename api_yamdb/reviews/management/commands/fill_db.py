@@ -3,13 +3,13 @@ import csv
 from django.core.management.base import BaseCommand
 
 from reviews.models import (Categories, Comments, Genres, GenreTitle, Review,
-                            Titles)
-from users.models import User
+                            Title)
+from users.models import CustomUser as User
 
 file_table = {
     'category.csv': Categories,
     'genre.csv': Genres,
-    'titles.csv': Titles,
+    'titles.csv': Title,
     'genre_title.csv': GenreTitle,
     'users.csv': User,
     'review.csv': Review,
@@ -30,15 +30,15 @@ class Command(BaseCommand):
                             id=row.pop('category'))
                         table.objects.get_or_create(category=category, **row)
                     elif file == 'genre_title.csv':
-                        title = Titles.objects.get(id=row.pop('title_id'))
+                        title = Title.objects.get(id=row.pop('title_id'))
                         genre = Genres.objects.get(id=row.pop('genre_id'))
                         table.objects.get_or_create(title_id=title,
                                                     genre_id=genre, **row)
                     elif file == 'review.csv':
-                        title = Titles.objects.get(id=row.pop('title_id'))
+                        title = Title.objects.get(id=row.pop('title_id'))
                         author = User.objects.get(id=row.pop('author'))
-                        table.objects.get_or_create(title_id=title,
-                                                    author=author, **row)
+                        table.objects.get_or_create(title=title, author=author,
+                                                    **row)
                     elif file == 'comments.csv':
                         review = Review.objects.get(id=row.pop('review_id'))
                         author = User.objects.get(id=row.pop('author'))
