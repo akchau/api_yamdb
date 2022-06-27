@@ -1,5 +1,5 @@
 """Кастомные представления приложения 'api'."""
-from rest_framework import viewsets, mixins
+from rest_framework import mixins, viewsets
 
 
 class ListCreateDeleteViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,

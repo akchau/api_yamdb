@@ -1,7 +1,6 @@
 """Модели приложения 'reviews'."""
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
 from users.models import CustomUser as User
 
 
@@ -118,8 +117,9 @@ class Review(models.Model):
     )
 
     class Meta:
+        ordering = ('id',)
         verbose_name = 'Отзыв'
-        verbose_name_plural = 'отзывы'
+        verbose_name_plural = 'Отзывы'
         unique_together = ('title', 'author')
 
 
@@ -132,3 +132,8 @@ class Comments(models.Model):
         'Дата публикации, комента',
         auto_now_add=True
     )
+
+    class Meta:
+        ordering = ('id',)
+        verbose_name = 'Комент'
+        verbose_name_plural = 'Коменты'

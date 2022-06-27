@@ -1,10 +1,10 @@
 """Эндпойнты приложения 'api'."""
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from .views import (CommentsViewSet, ReviewViewSet,
-                    CategoriesViewSet, GenresViewSet, TitleViewSet)
 from users.views import RegisterView, TokenView, UserMeView, UserViewSet
 
+from .views import (CategoriesViewSet, CommentsViewSet, GenresViewSet,
+                    ReviewViewSet, TitleViewSet)
 
 app_name = "api"
 

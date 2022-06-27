@@ -11,13 +11,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework.permissions import IsAuthenticated
 
 from .permissions import OnlyAdmin, OnlyAdminCanGiveRole
-from .serializers import (RegistrationSerializer,
-                          TokenSerializer,
+from .serializers import (RegistrationSerializer, TokenSerializer,
                           UserSerializer)
-
 
 User = get_user_model()
 
