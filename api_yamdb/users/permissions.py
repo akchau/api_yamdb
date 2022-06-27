@@ -1,6 +1,5 @@
 """Разрешения для работы с пользователями."""
-from rest_framework import permissions, status
-from rest_framework.response import Response
+from rest_framework import permissions
 from rest_framework.views import exceptions
 
 
@@ -10,7 +9,7 @@ class OnlyAdmin(permissions.BasePermission):
         return (
             request.user.is_superuser
             or (request.user.is_authenticated
-            and request.user.role == "admin")
+                and request.user.role == "admin")
         )
 
 

@@ -1,6 +1,5 @@
 """Фильтрация приложения 'api'."""
 import django_filters as filters
-
 from reviews.models import Title
 
 

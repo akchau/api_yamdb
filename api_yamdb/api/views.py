@@ -1,29 +1,19 @@
 """Представления приложения 'api'."""
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseBadRequest
-from rest_framework import viewsets, filters
-from django_filters.rest_framework import DjangoFilterBackend
 from django.core.exceptions import ObjectDoesNotExist
-from users.models import CustomUser as User
-from reviews.models import Comments, Review, Categories, Genres, Title
-from rest_framework.pagination import LimitOffsetPagination
-from .permissions import AuthorOrReadOnly
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, viewsets
 from rest_framework.exceptions import ParseError
-from rest_framework.response import Response
-from rest_framework import viewsets, views, status
-from reviews.models import Comments, Review, Title
-from .serializers import (
-    ReviewSerializer,
-    CommentSerializer,
-    CategoriesSerializer,
-    GenresSerializer,
-    TitleSerializer,
-    TitleROSerializer
-)
+from rest_framework.pagination import LimitOffsetPagination
+from reviews.models import Categories, Comments, Genres, Review, Title
+from users.models import CustomUser as User
+
 from .custom_viewsets import ListCreateDeleteViewSet
-from .permissions import AdminOrReadOnly
 from .filters import TitleFilter
+from .permissions import AdminOrReadOnly, AuthorOrReadOnly
+from .serializers import (CategoriesSerializer, CommentSerializer,
+                          GenresSerializer, ReviewSerializer,
+                          TitleROSerializer, TitleSerializer)
 
 
 def get_usr(self):
