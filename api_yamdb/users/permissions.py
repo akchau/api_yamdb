@@ -26,11 +26,7 @@ class OnlyAdminCanGiveRole(permissions.BasePermission):
         ):
             return True
         else:
-            _mutable = request.data._mutable
-            request.data._mutable = True
-            request.data['role'] = 'user'
-            request.data._mutable = _mutable
-            return Response(None, status=status.HTTP_403_FORBIDDEN)
+            raise exceptions.NotAuthenticated()
 
 
 class OnlyUser(permissions.BasePermission):
