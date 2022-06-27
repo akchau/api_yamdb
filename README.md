@@ -12,12 +12,6 @@ python3 -m venv venv
 ```
 pip3 install -r requirements.txt
 ```
-Создать миграции
-```
-python3 manage.py makemigrations
-```
-Применить миграции
-python3 manage.py migrate
 ## Регистрации пользователей
 - Пользователь отправляет POST-запрос на добавление нового пользователя с параметрами email и username на эндпоинт /api/v1/auth/signup/.
 - YaMDB отправляет письмо с кодом подтверждения (confirmation_code) на адрес email.
