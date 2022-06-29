@@ -3,33 +3,31 @@ from json import dumps
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.exceptions import ParseError
 from rest_framework.pagination import (LimitOffsetPagination,
                                        PageNumberPagination)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
-
 from reviews.models import Categories, Comments, Genres, Review, Title
+
+from api_yamdb import settings
+
 from .custom_viewsets import ListCreateDeleteViewSet
 from .filters import TitleFilter
-from .permissions import (AdminOrReadOnly, AuthorOrReadOnly,
-                          OnlyAdmin, OnlyAdminCanGiveRole)
+from .permissions import (AdminOrReadOnly, AuthorOrReadOnly, OnlyAdmin,
+                          OnlyAdminCanGiveRole)
 from .serializers import (CategoriesSerializer, CommentSerializer,
                           GenresSerializer, ReviewSerializer,
                           TitleROSerializer, TitleSerializer,
                           RegistrationSerializer, TokenSerializer,
                           UserSerializer)
-from api_yamdb import settings
-
 
 User = get_user_model()
 
@@ -78,6 +76,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
+    """Представление для работы с отзывами."""
     serializer_class = ReviewSerializer
     permission_classes = (AuthorOrReadOnly,)
 
@@ -92,6 +91,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 class CommentsViewSet(viewsets.ModelViewSet):
+    """Представление для работы с коментариями."""
     serializer_class = CommentSerializer
     pagination_class = LimitOffsetPagination
     permission_classes = (AuthorOrReadOnly,)
