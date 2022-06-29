@@ -8,12 +8,12 @@ from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 
-from .permissions import OnlyAdmin
+from .permissions import OnlyAdmin, OnlyAdminCanGiveRole
 from .serializers import (RegistrationSerializer, TokenSerializer,
                           UserSerializer)
 
@@ -85,7 +85,11 @@ class UserViewSet(viewsets.ModelViewSet):
     search_fields = ("username",)
     pagination_class = PageNumberPagination
 
-    @action(detail=False, methods=['get', 'patch'])
+    @action(detail=False, methods=['get', 'patch'], permission_classes=[
+        IsAuthenticated,
+        OnlyAdminCanGiveRole
+        ]
+    )
     def me(self, request):
         username = request.user.username
         user = get_object_or_404(User, username=username)

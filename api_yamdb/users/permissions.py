@@ -4,7 +4,7 @@ from rest_framework.views import exceptions
 
 
 class OnlyAdmin(permissions.BasePermission):
-    """Зона управления пользователями для админов."""
+    """Зона управления пользователями для админов"""
     def has_permission(self, request, view):
         return (
             request.user.is_superuser
@@ -27,11 +27,3 @@ class OnlyAdminCanGiveRole(permissions.BasePermission):
             return True
         else:
             raise exceptions.NotAuthenticated(detail={"role": 'user'})
-
-
-class OnlyUser(permissions.BasePermission):
-    """Только для юзеров."""
-    def has_permission(self, request, view,):
-        return (
-            request.user.role == 'user'
-        )
