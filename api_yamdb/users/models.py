@@ -50,6 +50,14 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
 
+    @property
+    def is_moderator(self):
+        return self.role == "moderator"
+
+    @property
+    def is_admin(self):
+        return self.role == "admin"
+
     class Meta:
         ordering = ('id',)
         verbose_name = 'Пользователь'

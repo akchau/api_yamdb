@@ -2,12 +2,13 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Avg
 from rest_framework import filters, viewsets
 from rest_framework.exceptions import ParseError
 from rest_framework.pagination import LimitOffsetPagination
+
 from reviews.models import Categories, Comments, Genres, Review, Title
 from users.models import CustomUser as User
-
 from .custom_viewsets import ListCreateDeleteViewSet
 from .filters import TitleFilter
 from .permissions import AdminOrReadOnly, AuthorOrReadOnly
@@ -45,7 +46,8 @@ class GenresViewSet(ListCreateDeleteViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     """Представление для работы с произведениями."""
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(Avg("review__score")).order_by(
+        "id")
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
