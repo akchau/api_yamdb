@@ -56,21 +56,13 @@ class TitleROSerializer(serializers.ModelSerializer):
     """Сериализатор для чтения произведений."""
     category = CategoriesSerializer(read_only=True)
     genre = GenresSerializer(read_only=True, many=True)
-    rating = serializers.SerializerMethodField()
+    rating = serializers.IntegerField(source='review__score__avg',
+                                      read_only=True)
 
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre',
                   'category')
-
-    def get_rating(self, obj):
-        """Функция для создания вычисляемого поля 'Рейтинг' произведения."""
-        rating = Review.objects.filter(
-            title_id=obj.id
-        ).aggregate(Avg("score"))["score__avg"]
-        if rating:
-            return round(rating)
-        return None
 
 
 class ReviewSerializer(serializers.ModelSerializer):
