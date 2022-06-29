@@ -9,6 +9,7 @@ from .views import (CategoriesViewSet, CommentsViewSet, GenresViewSet,
 app_name = "api"
 
 router = DefaultRouter()
+router.register(r"users/me", UserViewSet, basename='me')
 router.register(r"users", UserViewSet, basename='users')
 router.register(r'categories', CategoriesViewSet, basename='categories')
 router.register(r'genres', GenresViewSet, basename='genres')
@@ -31,6 +32,6 @@ urlpatterns = [
         TokenView.as_view(),
         name='token_obtain_pair'
     ),
-    path("v1/users/me/", UserMeView.as_view()),
+    # path("v1/users/me/", UserMeView.as_view()),
     path("v1/", include(router.urls)),
 ]
