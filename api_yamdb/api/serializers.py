@@ -1,10 +1,12 @@
 """Сериализаторы приложения 'api'."""
 from datetime import datetime
 
-from django.db.models import Avg
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
+from rest_framework.exceptions import ValidationError
+
 from reviews.models import Categories, Comments, Genres, Review, Title
 
 
@@ -72,6 +74,15 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ('id', 'text', 'author', 'score', 'pub_date',)
         read_only_fields = ('title',)
         model = Review
+
+    def validate(self, data):
+        author = self.context.get('request').user
+        title_id = self.context.get('view').kwargs.get('url_title_id')
+        title = get_object_or_404(Title, id=title_id)
+        if self.context.get('request').method == 'POST':
+            if Review.objects.filter(title=title, author=author).exists():
+                raise ValidationError('Ревью уже существует!')
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):

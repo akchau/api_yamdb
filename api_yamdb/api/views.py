@@ -69,22 +69,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return Review.objects.filter(title_id=url_title_id)
 
     def perform_create(self, serializer):
-        obj = ""
-        title = get_object_or_404(
-            Title,
-            id=self.kwargs.get("url_title_id")
-        )
-        try:
-            obj = Review.objects.get(
-                title_id=title,
-                author=get_usr(self)
-            )
-        except ObjectDoesNotExist:
-            pass
-        if obj:
-            raise ParseError("Отзыв уже существует!")
-        else:
-            serializer.save(author=get_usr(self), title=title)
+        title_id = self.kwargs.get('url_title_id')
+        title = get_object_or_404(Title, id=title_id)
+        serializer.save(author=get_usr(self), title=title)
 
 
 class CommentsViewSet(viewsets.ModelViewSet):
