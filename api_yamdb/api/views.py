@@ -185,9 +185,12 @@ class UserViewSet(viewsets.ModelViewSet):
     search_fields = ("username",)
     pagination_class = PageNumberPagination
 
-    @action(detail=False, methods=['get', 'patch'], permission_classes=[
-        IsAuthenticated,
-        OnlyAdminCanGiveRole
+    @action(
+        detail=False,
+        methods=['get', 'patch'],
+        permission_classes=[
+            IsAuthenticated,
+            OnlyAdminCanGiveRole
         ]
     )
     def me(self, request):
