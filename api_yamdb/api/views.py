@@ -28,6 +28,7 @@ from .serializers import (CategoriesSerializer, CommentSerializer,
                           TitleROSerializer, TitleSerializer,
                           RegistrationSerializer, TokenSerializer,
                           UserSerializer)
+from api_yamdb import settings
 
 
 User = get_user_model()
@@ -143,11 +144,11 @@ def register_view(request):
         message=(
             f"Добрый день, {username}!\n"
             f"Для подтверждения регистрации отправьте POST "
-            f"запрос на http://127.0.0.1:8000/api/v1/auth/token/ "
+            f"запрос на http://{settings.DOMAIN}/api/v1/auth/token/ "
             f"в теле запроса передайте:\n"
             f"{json_body}"
         ),
-        from_email="pass_confirm_yamdb@yamdb.ya",
+        from_email=f"{settings.CONFIRM_EMAIL}",
         recipient_list=[request.data["email"]],
     )
     return Response(serializer.data, status=status.HTTP_200_OK)
