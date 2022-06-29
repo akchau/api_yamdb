@@ -40,11 +40,11 @@ class AuthorOrReadOnly(permissions.BasePermission):
 class OnlyAdmin(permissions.BasePermission):
     """Зона управления пользователями для админов"""
     def has_permission(self, request, view):
-        return (
-            request.user.is_superuser
-            or (request.user.is_authenticated
-                and request.user.role == "admin")
-        )
+        if request.user.is_superuser:
+            return True
+        if request.user.is_authenticated and request.user.is_admin:
+            return True
+        return False
 
 
 class OnlyAdminCanGiveRole(permissions.BasePermission):
@@ -52,12 +52,11 @@ class OnlyAdminCanGiveRole(permissions.BasePermission):
     def has_permission(self, request, view,):
         if request.user.is_anonymous:
             raise exceptions.NotAuthenticated()
-        if (
-            request.method in permissions.SAFE_METHODS
-            or request.data.get('role')
-            and request.user.role == 'admin'
-            or (not request.data.get('role'))
-        ):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        if request.data.get('role') and request.user.is_admin:
+            return True
+        if not request.data.get('role'):
             return True
         else:
             raise exceptions.NotAuthenticated(detail={"role": 'user'})
