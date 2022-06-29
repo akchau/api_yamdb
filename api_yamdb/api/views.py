@@ -11,7 +11,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import ParseError
-from rest_framework.pagination import LimitOffsetPagination, PageNumberPagination
+from rest_framework.pagination import (LimitOffsetPagination,
+                                       PageNumberPagination)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -20,10 +21,11 @@ from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Categories, Comments, Genres, Review, Title
 from .custom_viewsets import ListCreateDeleteViewSet
 from .filters import TitleFilter
-from .permissions import AdminOrReadOnly, AuthorOrReadOnly, OnlyAdmin, OnlyAdminCanGiveRole
+from .permissions import (AdminOrReadOnly, AuthorOrReadOnly,
+                          OnlyAdmin, OnlyAdminCanGiveRole)
 from .serializers import (CategoriesSerializer, CommentSerializer,
                           GenresSerializer, ReviewSerializer,
-                          TitleROSerializer, TitleSerializer, 
+                          TitleROSerializer, TitleSerializer,
                           RegistrationSerializer, TokenSerializer,
                           UserSerializer)
 
