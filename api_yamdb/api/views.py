@@ -24,10 +24,9 @@ from .filters import TitleFilter
 from .permissions import (AdminOrReadOnly, AuthorOrReadOnly, OnlyAdmin,
                           OnlyAdminCanGiveRole)
 from .serializers import (CategoriesSerializer, CommentSerializer,
-                          GenresSerializer, ReviewSerializer,
-                          TitleROSerializer, TitleSerializer,
-                          RegistrationSerializer, TokenSerializer,
-                          UserSerializer)
+                          GenresSerializer, RegistrationSerializer,
+                          ReviewSerializer, TitleROSerializer, TitleSerializer,
+                          TokenSerializer, UserSerializer)
 
 User = get_user_model()
 
