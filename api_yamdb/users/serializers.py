@@ -1,5 +1,6 @@
 """Сериализаторы для модели пользователя."""
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 User = get_user_model()
@@ -17,11 +18,22 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         """Проверка username !=me"""
-        if value.lower() == "me":
-            raise serializers.ValidationError(
-                "Использовать имя 'me' в качестве username запрещено."
-            )
-        return value
+        try:
+            User.objects.get(username=value)
+        except User.DoesNotExist:
+            if value.lower() == "me":
+                raise serializers.ValidationError(
+                    "Использовать имя 'me' в качестве username запрещено."
+                )
+            return value
+        raise serializers.ValidationError('Пользователь существует.')
+
+    def validate_email(self, value):
+        try:
+            User.objects.get(email=value)
+        except User.DoesNotExist:
+            return value
+        raise serializers.ValidationError('Пользователь существует.')
 
 
 class TokenSerializer(serializers.Serializer):

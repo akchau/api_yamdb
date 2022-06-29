@@ -1,7 +1,7 @@
 """Эндпойнты приложения 'api'."""
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from users.views import RegisterView, TokenView, UserMeView, UserViewSet
+from users.views import register_view, TokenView, UserViewSet
 
 from .views import (CategoriesViewSet, CommentsViewSet, GenresViewSet,
                     ReviewViewSet, TitleViewSet)
@@ -25,12 +25,11 @@ router.register(
 )
 
 urlpatterns = [
-    path("v1/auth/signup/", RegisterView.as_view()),
+    path("v1/auth/signup/", register_view),
     path(
         'v1/auth/token/',
         TokenView.as_view(),
         name='token_obtain_pair'
     ),
-    # path("v1/users/me/", UserMeView.as_view()),
     path("v1/", include(router.urls)),
 ]
