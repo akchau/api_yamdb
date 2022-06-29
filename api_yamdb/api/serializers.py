@@ -3,11 +3,10 @@ from datetime import datetime
 
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
-from rest_framework.exceptions import ValidationError
-
 from reviews.models import Categories, Comments, Genres, Review, Title
 
 User = get_user_model()
@@ -71,6 +70,7 @@ class TitleROSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для отзывов."""
     author = SlugRelatedField(read_only=True, slug_field='username')
 
     class Meta:
@@ -89,6 +89,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """Сериализатор для коментариев."""
     author = SlugRelatedField(read_only=True, slug_field='username')
 
     class Meta:
