@@ -1,6 +1,7 @@
 """Сериализаторы приложения 'api'."""
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 from rest_framework.relations import SlugRelatedField
@@ -8,6 +9,8 @@ from rest_framework.validators import UniqueTogetherValidator
 from rest_framework.exceptions import ValidationError
 
 from reviews.models import Categories, Comments, Genres, Review, Title
+
+User = get_user_model()
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
@@ -92,3 +95,54 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'text', 'author', 'pub_date',)
         read_only_fields = ('review_id)',)
         model = Comments
+
+
+class RegistrationSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для создания неподтвержденного польлзователя.
+    Управление пользователем. Отправка эмэйла."
+    """
+
+    class Meta:
+        model = User
+        fields = ("email", "username")
+
+    def validate_username(self, value):
+        """Проверка username !=me"""
+        try:
+            User.objects.get(username=value)
+        except User.DoesNotExist:
+            if value.lower() == "me":
+                raise serializers.ValidationError(
+                    "Использовать имя 'me' в качестве username запрещено."
+                )
+            return value
+        raise serializers.ValidationError('Пользователь существует.')
+
+    def validate_email(self, value):
+        try:
+            User.objects.get(email=value)
+        except User.DoesNotExist:
+            return value
+        raise serializers.ValidationError('Пользователь существует.')
+
+
+class TokenSerializer(serializers.Serializer):
+    """Сериализатор для авторизации пользователя."""
+    username = serializers.CharField(max_length=255)
+    confirmation_code = serializers.CharField(max_length=128)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Сериализатор управления пользователем."""
+
+    class Meta:
+        model = User
+        fields = (
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "bio",
+            "role"
+        )
