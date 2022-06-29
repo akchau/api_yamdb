@@ -88,7 +88,7 @@ class UserViewSet(viewsets.ModelViewSet):
     search_fields = ("username",)
     pagination_class = PageNumberPagination
 
-    @action(detail=True, methods=['get', 'patch'])
+    @action(detail=False, methods=['get', 'patch'])
     def me(self, request):
         username = request.user.username
         user = get_object_or_404(User, username=username)
