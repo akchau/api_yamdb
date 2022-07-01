@@ -3,7 +3,7 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .views import (CategoriesViewSet, CommentsViewSet, GenresViewSet,
-                    ReviewViewSet, TitleViewSet, TokenView, UserViewSet,
+                    ReviewViewSet, TitleViewSet, token_view, UserViewSet,
                     register_view)
 
 app_name = "api"
@@ -28,7 +28,7 @@ auth_urlpatterns = [
     path('signup/', register_view),
     path(
         'token/',
-        TokenView.as_view(),
+        token_view,
         name='token_obtain_pair'
     ),
 ]

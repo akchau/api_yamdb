@@ -13,7 +13,6 @@ from rest_framework.pagination import (LimitOffsetPagination,
                                        PageNumberPagination)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Categories, Comments, Genres, Review, Title
 
@@ -140,22 +139,20 @@ def register_view(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class TokenView(APIView):
-    """Класс получения токена."""
-    permission_classes = (AllowAny, )
-
-    def post(self, request):
-        """Получение токена при POST-запросе."""
-        serializer = TokenSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True) and serializer.data:
-            username = serializer.validated_data['username']
-            user = get_object_or_404(User, username=username)
-            if default_token_generator.check_token(
-                user, serializer.validated_data['confirmation_code']
-            ):
-                token = AccessToken.for_user(user)
-                return Response({"token": str(token)}, status.HTTP_200_OK)
-        return Response("Пустой запрос", status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def token_view(request):
+    """Получение токена при POST-запросе."""
+    serializer = TokenSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    username = serializer.validated_data['username']
+    user = get_object_or_404(User, username=username)
+    if default_token_generator.check_token(
+        user, serializer.validated_data['confirmation_code']
+    ):
+        token = AccessToken.for_user(user)
+        return Response({"token": str(token)}, status.HTTP_200_OK)
+    return Response("Неверный запрос", status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):

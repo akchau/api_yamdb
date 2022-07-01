@@ -111,7 +111,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def validate_username(self, value):
         """Проверка username !=me"""
         try:
-            User.objects.get(username=value)
+            User.objects.get(username=value).exists()
         except User.DoesNotExist:
             if value.lower() == "me":
                 raise serializers.ValidationError(
