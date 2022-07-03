@@ -110,22 +110,22 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         """Проверка username !=me"""
-        try:
-            User.objects.get(username=value).exists()
-        except User.DoesNotExist:
+        if not User.objects.filter(username=value).exists():
             if value.lower() == "me":
                 raise serializers.ValidationError(
                     "Использовать имя 'me' в качестве username запрещено."
                 )
             return value
-        raise serializers.ValidationError('Пользователь существует.')
+        else:
+            raise serializers.ValidationError('Пользователь уже существует.')
 
     def validate_email(self, value):
-        try:
-            User.objects.get(email=value)
-        except User.DoesNotExist:
+        if not User.objects.filter(email=value).exists():
             return value
-        raise serializers.ValidationError('Пользователь существует.')
+        else:
+            raise serializers.ValidationError(
+                'Пользователь с таким емейл уже существует.'
+            )
 
 
 class TokenSerializer(serializers.Serializer):
