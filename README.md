@@ -1,3 +1,5 @@
+[Перейти к остальным проектам](https://github.com/akchau/akchau/blob/main/README.md#проекты)
+
 # YaMDb
 
 # Проект YaMDb собирает отзывы пользователей на произведения. 
